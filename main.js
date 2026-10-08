@@ -19,3 +19,20 @@
     else io.observe(el);
   });
 })();
+
+// Project descriptions: show four lines, then "+ Read more" / "− Close".
+document.querySelectorAll('.desc').forEach(function (d) {
+  d.classList.add('clamp');
+  if (d.scrollHeight <= d.clientHeight + 2) { d.classList.remove('clamp'); return; }
+  var b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'more-btn';
+  b.setAttribute('aria-expanded', 'false');
+  b.textContent = '+ Read more';
+  b.addEventListener('click', function () {
+    var open = d.classList.toggle('clamp') === false;
+    b.textContent = open ? '− Close' : '+ Read more';
+    b.setAttribute('aria-expanded', String(open));
+  });
+  d.after(b);
+});
