@@ -127,3 +127,7 @@ img, video { display: block; width: 100%; height: auto; }
 /* home: landscapes fill the column as 16:9 crops (as in the reference); portraits keep the same height uncropped */
 .home .m.land { width: 100%; height: calc(100cqw * .5625); }
 .home .m.land img { height: 100%; object-fit: cover; }
+
+/* project pages: every image/video is the full column width, height follows its own ratio */
+.proj .m.tall, .proj .m.wide { width: 100%; height: auto; }
+.proj .m img, .proj .m video { width: 100%; height: auto; object-fit: initial; }
