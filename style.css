@@ -1,12 +1,12 @@
+/* proportions measured from the reference at 1440px:
+   13px outer margin, side column ~28vw, 12.3px type, one shared row height (16:9 of the media column) */
 :root {
   --bg: #f3f3f3;
   --ink: rgba(0, 0, 0, .85);
   --grey: rgba(0, 0, 0, .45);
-  --line: rgba(0, 0, 0, .12);
-  --side: clamp(220px, 28vw, 340px);
-  --pad: 12px;
-  --gap: 10px;
-  --font: "Courier Prime", "Courier New", Courier, ui-monospace, monospace;
+  --pad: max(10px, .9vw);
+  --side: 27.9vw;
+  --font: "Iosevka", "Iosevka Term", "SF Mono", ui-monospace, Menlo, monospace;
 }
 
 * { box-sizing: border-box; }
@@ -15,7 +15,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font: 400 13px/1.35 var(--font);
+  font: 400 clamp(11px, .855vw, 14px)/1.15 var(--font);
   -webkit-font-smoothing: antialiased;
 }
 a { color: inherit; text-decoration: none; }
@@ -31,18 +31,18 @@ img, video { display: block; width: 100%; height: auto; }
   position: fixed;
   inset: 0 auto 0 0;
   width: var(--side);
-  padding: var(--pad);
+  padding: var(--pad) var(--pad) var(--pad) var(--pad);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
 }
 .who { display: flex; flex-direction: column; }
-.list { margin-top: 1.35em; }
+.list { margin-top: 1.15em; }
 .list ol { list-style: none; }
 .list a { display: inline-flex; }
 .list .n { flex: none; width: 4ch; }
-.pages { margin-top: 1.35em; display: flex; flex-direction: column; align-items: flex-start; }
-.side .foot { margin-top: auto; padding-top: 2.7em; }
+.pages { margin-top: 1.15em; display: flex; flex-direction: column; align-items: flex-start; }
+.side .foot { margin-top: auto; padding-top: 2.3em; }
 
 /* ---- right column ---- */
 .main {
@@ -50,58 +50,80 @@ img, video { display: block; width: 100%; height: auto; }
   padding: var(--pad) var(--pad) var(--pad) 0;
   min-height: 100vh;
 }
-.stack { display: flex; flex-direction: column; gap: var(--gap); }
-.stack figure, .tile { background: #e6e6e4; }
-.tile { position: relative; display: block; }
-.tile .cap {
-  position: absolute; left: 0; bottom: 0;
-  padding: 6px 8px;
-  background: var(--bg);
-  opacity: 0;
-  transition: opacity .2s;
+
+/* media: every item shares one row height (16:9 of the column), so portraits sit
+   at the same height as landscapes and pair up side by side when they fit */
+.stack {
+  container-type: inline-size;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--pad);
 }
-.tile:hover { text-decoration: none; }
-.tile:hover .cap, .tile:focus-visible .cap { opacity: 1; }
+.m { display: block; background: #e6e6e4; }
+.m.tall { height: calc(100cqw * .5625); width: calc(100cqw * .5625 * var(--r)); max-width: 100%; }
+.m.wide { width: 100%; }
+.m.tall img, .m.tall video { width: 100%; height: 100%; object-fit: cover; }
+
+/* fade + rise as each item scrolls into view (main.js adds .in) */
+.js .m { opacity: 0; transform: translateY(28px); transition: opacity 1s ease, transform 1.1s cubic-bezier(.2, .7, .2, 1); }
+.js .m.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .js .m { opacity: 1; transform: none; transition: none; }
+}
 
 /* ---- project intro ---- */
 .intro {
   display: grid;
-  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-  gap: var(--pad) calc(var(--pad) * 3);
-  margin-bottom: 4.5em;
+  grid-template-columns: 56.4% 1fr;
+  column-gap: 3.4%;
+  row-gap: 1.15em;
+  margin-bottom: calc(var(--pad) * 7);
 }
-.intro .text { max-width: 62ch; }
-.intro .text p + p { margin-top: 1em; }
+.intro .text p + p, .more p + p { margin-top: 1.15em; }
+.intro .text p.h { margin-top: 2.3em; }
 .intro .text p.h + p { margin-top: 0; }
-.intro .text p.h { margin-top: 1.6em; }
+.more { margin-top: 1.15em; }
+.more summary { list-style: none; cursor: pointer; color: var(--grey); width: max-content; }
+.more summary::-webkit-details-marker { display: none; }
+.more summary:hover { color: var(--ink); }
+.more .c, .more[open] .o { display: none; }
+.more[open] .c { display: inline; }
+.more[open] summary { margin-bottom: 1.15em; }
+.more[open] > p:first-of-type { margin-top: 0; }
 .meta { display: flex; flex-direction: column; }
-.arrow { display: inline-block; margin-top: 1.35em; }
-.next { display: inline-block; margin: 4.5em 0 2em; }
+.arrow { display: inline-block; margin-top: 1.15em; }
+.next { display: inline-block; margin: calc(var(--pad) * 7) 0 calc(var(--pad) * 2); }
 
-.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap); align-items: start; }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--pad); align-items: start; }
+.grid3 .m { width: auto; height: auto; }
+.grid3 .m img { height: auto; }
 
 /* ---- information ---- */
 .info {
   display: grid;
-  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-  gap: var(--pad) calc(var(--pad) * 3);
+  grid-template-columns: 56.4% 1fr;
+  column-gap: 3.4%;
   padding-bottom: 4em;
 }
-.info p + p { margin-top: 1em; }
-.info .lead { margin-bottom: 1.35em; }
-.info p:not(.lead) { max-width: 62ch; }
-.info h2 { margin: 2.7em 0 1.35em; }
+.info p + p { margin-top: 1.15em; }
+.info .lead { margin-bottom: 1.15em; }
+.info p:not(.lead) { max-width: 70ch; }
+.info h2 { margin: 3.45em 0 1.15em; }
 .plain { list-style: none; }
-.plain li + li { margin-top: .5em; }
+.plain li + li { margin-top: .6em; }
 .arrows li + li { margin-top: 0; }
 
 /* ---- small screens: the side column becomes a header ---- */
 @media (max-width: 760px) {
-  body { font-size: 13px; }
+  body { font-size: 12px; }
   .side { position: static; width: auto; overflow: visible; }
-  .side .foot { padding-top: 1.35em; }
+  .side .foot { padding-top: 1.15em; }
   .main { margin-left: 0; padding: var(--pad); min-height: 0; }
   .intro, .info { grid-template-columns: 1fr; }
   .grid3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .tile .cap { opacity: 1; position: static; display: block; padding: 6px 0 4px; }
 }
+
+/* home: landscapes fill the column as 16:9 crops (as in the reference); portraits keep the same height uncropped */
+.home .m.land { width: 100%; height: calc(100cqw * .5625); }
+.home .m.land img { height: 100%; object-fit: cover; }
